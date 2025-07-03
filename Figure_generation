@@ -1,0 +1,156 @@
+## Imports
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
+from scipy.stats import spearmanr
+import statsmodels.api as sm
+from matplotlib.ticker import FormatStrFormatter
+import openpyxl
+
+## Data preparation
+
+df = pd.read_excel('raw_data.xlsx')
+
+df_patients = df[df['Group'] == 'Stroke']
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df_patients_CST['Paretic_npht'] = df_patients_CST['Paretic_peg']/10
+
+
+## Figure 2
+
+def plot_lm_with_symmetric_ci(df, x, y, ax):
+    import statsmodels.api as sm
+
+    X = sm.add_constant(df[x])
+    model = sm.OLS(df[y], X).fit()
+
+    x_pred = np.linspace(df[x].min(), df[x].max(), 100)
+    X_pred = sm.add_constant(x_pred)
+
+    preds = model.get_prediction(X_pred)
+    pred_summary = preds.summary_frame(alpha=0.05)
+
+    ax.scatter(df[x], df[y], color='black', s=40)
+    ax.plot(x_pred, pred_summary['mean'], color='black', lw=2)
+    ax.plot(x_pred, pred_summary['mean_ci_lower'], color='black', lw=1, ls='--')
+    ax.plot(x_pred, pred_summary['mean_ci_upper'], color='black', lw=1, ls='--')
+
+    ax.tick_params(axis='both', direction='out', labelsize=12, width=2, length=6)
+    ax.spines['left'].set_linewidth(1.5)
+    ax.spines['bottom'].set_linewidth(1.5)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+# Create FacetGrid
+g = sns.FacetGrid(df_patients_CST, col='Time', row='Tract', height=4, aspect=1)
+
+# Map function onto the FacetGrid
+for time_val in df_patients_CST['Time'].unique():
+    for tract_val in df_patients_CST['Tract'].unique():
+        ax = g.axes[df_patients_CST['Tract'].unique().tolist().index(tract_val),
+                    df_patients_CST['Time'].unique().tolist().index(time_val)]
+
+        subset = df_patients_CST[(df_patients_CST['Time'] == time_val) & (df_patients_CST['Tract'] == tract_val)]
+
+        if not subset.empty:
+            plot_lm_with_symmetric_ci(subset, 'dti_FA', 'Paretic_npht', ax)
+
+g.set_axis_labels("CST FA (dti_FA)", "Dexterity (Paretic_peg)")
+g.set_titles(row_template="{row_name}", col_template="{col_name}")
+
+plt.ylim([0,1400])
+plt.xlim([0.5,0.70])
+plt.tight_layout()
+
+#plt.savefig('Figure_3A.svg')
+plt.show()
+
+## Figure 3A
+
+def plot_lm_with_symmetric_ci(df, x, y, ax):
+    import statsmodels.api as sm
+
+    X = sm.add_constant(df[x])
+    model = sm.OLS(df[y], X).fit()
+
+    x_pred = np.linspace(df[x].min(), df[x].max(), 100)
+    X_pred = sm.add_constant(x_pred)
+
+    preds = model.get_prediction(X_pred)
+    pred_summary = preds.summary_frame(alpha=0.05)
+
+    ax.scatter(df[x], df[y], color='black', s=40)
+    ax.plot(x_pred, pred_summary['mean'], color='black', lw=2)
+    ax.plot(x_pred, pred_summary['mean_ci_lower'], color='black', lw=1, ls='--')
+    ax.plot(x_pred, pred_summary['mean_ci_upper'], color='black', lw=1, ls='--')
+
+    ax.tick_params(axis='both', direction='out', labelsize=12, width=1.5, length=6)
+    ax.spines['left'].set_linewidth(1.5)
+    ax.spines['bottom'].set_linewidth(1.5)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+# Create FacetGrid
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(4, 4))
+
+plot_lm_with_symmetric_ci(short_dti_stroke, 'T2-T1_L_CST_DTI_perc', 'T2-T1_peg_perc', ax)
+
+ax.set_ylabel("% change in FA")
+ax.set_xlabel("% change in NHPT time")
+ax.set_ylim([-60, 20])
+ax.set_xlim([-6, 6])
+
+plt.tight_layout()
+plt.savefig('Figure_3.svg')
+plt.show()
+
+## Figure 3B
+
+def plot_lm_with_symmetric_ci(df, x, y, ax):
+    import statsmodels.api as sm
+
+    X = sm.add_constant(df[x])
+    model = sm.OLS(df[y], X).fit()
+
+    x_pred = np.linspace(df[x].min(), df[x].max(), 100)
+    X_pred = sm.add_constant(x_pred)
+
+    preds = model.get_prediction(X_pred)
+    pred_summary = preds.summary_frame(alpha=0.05)
+
+    ax.scatter(df[x], df[y], color='black', s=40)
+    ax.plot(x_pred, pred_summary['mean'], color='black', lw=2)
+    ax.plot(x_pred, pred_summary['mean_ci_lower'], color='black', lw=1, ls='--')
+    ax.plot(x_pred, pred_summary['mean_ci_upper'], color='black', lw=1, ls='--')
+
+    ax.tick_params(axis='both', direction='out', labelsize=12, width=1.5, length=6)
+    ax.spines['left'].set_linewidth(1.5)
+    ax.spines['bottom'].set_linewidth(1.5)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+# Create FacetGrid
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(4, 4))
+
+plot_lm_with_symmetric_ci(short_dti_stroke, 'T2-T1_R_CST_DTI_perc', 'T2-T1_peg_perc', ax)
+
+ax.set_ylabel("% change in FA")
+ax.set_xlabel("% change in NHPT time")
+ax.set_ylim([-60, 20])
+ax.set_xlim([-6, 6])
+
+plt.tight_layout()
+#plt.savefig('Figure_3B.svg')
+plt.show()
